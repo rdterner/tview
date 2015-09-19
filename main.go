@@ -24,6 +24,13 @@ var palette color.Palette = []color.Color{
 	attrColor(termbox.ColorWhite),
 }
 
+func upgrade(palette color.Palette) color.Palette {
+	for i := 16; i <= 255; i++ {
+		palette = append(palette, attrColor(i))
+	}
+	return palette
+}
+
 type attrColor termbox.Attribute
 
 var base = [...]uint8{0x00, 0x5f, 0x87, 0xaf, 0xd7, 0xff}
@@ -124,7 +131,9 @@ func main() {
 	}
 	defer termbox.Close()
 
-	termbox.SetOutputMode(termbox.Output256)
+	if termbox.SetOutputMode(termbox.Output256) == termbox.Output256 {
+		palette = upgrade(palette)
+	}
 
 	lw, lh := termbox.Size()
 	draw(img)
