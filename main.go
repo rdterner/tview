@@ -26,6 +26,8 @@ var palette color.Palette = []color.Color{
 
 type attrColor termbox.Attribute
 
+var base = [...]uint8{0x00, 0x5f, 0x87, 0xaf, 0xd7, 0xff}
+
 func (c attrColor) RGBA() (r, g, b, a uint32) {
 	switch termbox.Attribute(c) {
 	case termbox.ColorBlack:
@@ -45,6 +47,18 @@ func (c attrColor) RGBA() (r, g, b, a uint32) {
 	case termbox.ColorWhite:
 		return math.MaxUint16, math.MaxUint16, math.MaxUint16, math.MaxUint16
 	}
+
+	switch {
+	case c >= 16 && c <= 231:
+		c -= 16
+		rgba := color.RGBA{R: base[(c/36)%6], G: base[(c/6)%6], B: base[c%6], A: 0xff}
+		return rgba.RGBA()
+	case c >= 232 && c <= 255:
+		x := uint8(0x08 + 0xa*(c-232))
+		rgba := color.RGBA{R: x, G: x, B: x, A: 0xff}
+		return rgba.RGBA()
+	}
+
 	panic("not found")
 }
 
