@@ -124,6 +124,8 @@ func main() {
 	}
 	defer termbox.Close()
 
+	termbox.SetOutputMode(termbox.Output256)
+
 	lw, lh := termbox.Size()
 	draw(img)
 loop:
